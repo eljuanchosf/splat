@@ -5,20 +5,44 @@ import (
 	"testing"
 )
 
+var simpleYaml = `a: Easy!
+b:
+  c: 2
+  d: [3, 4]
+    f: ((< this is a command >))`
+
+var simpleDoc = Doc{
+	Lines: []Line{
+		{0, "a", "Easy!", 0, false},
+		{1, "b", "", 0, false},
+		{2, "c", "2", 2, false},
+		{3, "d", "[3, 4]", 2, false},
+		{4, "f", "((< this is a command >))", 4, true},
+	},
+}
+
+var simpleYamlFile = "../fixtures/simple-yaml.yml"
+
 func TestParse(t *testing.T) {
 	type args struct {
 		doc string
 	}
 	tests := []struct {
-		name string
-		args args
-		want Doc
+		name    string
+		args    args
+		want    Doc
+		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{"Simple YAML", args{simpleYaml}, simpleDoc, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Parse(tt.args.doc); !reflect.DeepEqual(got, tt.want) {
+			got, err := Parse(tt.args.doc)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Parse() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Parse() = %v, want %v", got, tt.want)
 			}
 		})
@@ -35,7 +59,8 @@ func TestParseFile(t *testing.T) {
 		want    Doc
 		wantErr bool
 	}{
-	// TODO: Add test cases.
+		{"Parse simple stub", args{simpleYamlFile}, simpleDoc, false},
+		{"File not exists", args{"someNonExistingFile"}, Doc{}, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

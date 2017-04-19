@@ -3,6 +3,7 @@ package yaml
 import (
 	"bufio"
 	"io/ioutil"
+	"regexp"
 	"strings"
 )
 
@@ -13,6 +14,7 @@ type Doc struct {
 
 // Line represents a line in a Yaml file
 type Line struct {
+	Order      int
 	Key        string
 	Value      string
 	Indent     int
@@ -20,16 +22,27 @@ type Line struct {
 }
 
 // Parse parses a YAML document as text
-func Parse(doc string) Doc {
+func Parse(doc string) (Doc, error) {
 	yaml := Doc{}
 	scanner := bufio.NewScanner(strings.NewReader(doc))
+	numLine := 0
 	for scanner.Scan() {
-		key, value, _ := splitLine(scanner.Text())
+		key, value, err := splitLine(scanner.Text())
+		if err != nil {
+			return yaml, err
+		}
+
+		hasCommand := false
+		if regexp.MustCompile(`\(\(<.*>\)\)`).MatchString(value) == true {
+			hasCommand = true
+		}
+
 		indent := countLeadingSpace(key)
-		docLine := Line{Key: strings.TrimSpace(key), Value: strings.TrimSpace(value), Indent: indent}
+		docLine := Line{Order: numLine, Key: strings.TrimSpace(key), Value: strings.TrimSpace(value), Indent: indent, HasCommand: hasCommand}
 		yaml.Lines = append(yaml.Lines, docLine)
+		numLine++
 	}
-	return yaml
+	return yaml, nil
 }
 
 // ParseFile parses the YAML file into a text representation
@@ -38,7 +51,7 @@ func ParseFile(fileName string) (Doc, error) {
 	if err != nil {
 		return Doc{}, err
 	}
-	yaml := Parse(string(bytes))
+	yaml, err := Parse(string(bytes))
 	if err != nil {
 		return Doc{}, err
 	}
