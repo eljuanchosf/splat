@@ -1,4 +1,4 @@
-package yaml
+package main
 
 import (
 	"reflect"
@@ -21,7 +21,7 @@ var simpleDoc = Doc{
 	},
 }
 
-var simpleYamlFile = "../fixtures/simple-yaml.yml"
+var simpleYamlFile = "./fixtures/simple-yaml.yml"
 
 func TestParse(t *testing.T) {
 	type args struct {
