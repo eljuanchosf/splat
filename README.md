@@ -1,6 +1,7 @@
 # splat!
 
 [![Build Status](https://travis-ci.org/eljuanchosf/splat.svg?branch=master)](https://travis-ci.org/eljuanchosf/splat)
+[![codecov](https://codecov.io/gh/eljuanchosf/splat/branch/master/graph/badge.svg)](https://codecov.io/gh/eljuanchosf/splat)
 
 splat! is a simple yet powrful way to replace values in a YAML file.
 
@@ -14,7 +15,7 @@ b:
     f: ((< fileContent(./myfile) >))`
 ```
 
-## Run splat!:
+## Run splat!
 
 ```sh
 splat myfile.yml
