@@ -36,7 +36,7 @@ func lookUpFile(args []string) (value string, err error) {
 	if cfg.Section("").HasKey(args[1]) {
 		value = cfg.Section("").Key(args[1]).String()
 	} else {
-		err = fmt.Errorf("Cannot find key %s in file %s", args[1], args[0])
+		err = fmt.Errorf("Cannot find key %s in file %s", args[1], absPath)
 		return value, err
 	}
 	return value, nil
