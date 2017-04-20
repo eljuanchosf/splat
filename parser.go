@@ -68,6 +68,42 @@ func splitLine(line string) (key string, value string, err error) {
 	return key, value, nil
 }
 
+func extractCommand(text string) (command Command, err error) {
+	rgxp, err := regexp.Compile(`\(\(<(.*)>\)\)`)
+	if err != nil {
+		return command, err
+	}
+	r := rgxp.FindStringSubmatch(text)
+	cmdString := strings.TrimSpace(r[1])
+	command.runner = extractRunner(cmdString)
+	command.args = extractRunnerArgs(cmdString)
+	return
+}
+
+func extractRunner(cmd string) (runner string) {
+	rgxp, _ := regexp.Compile(`(.*)\((.*)\)`)
+	runner = rgxp.FindAllStringSubmatch(cmd, -1)[0][1]
+	return
+}
+
+func extractRunnerArgs(cmd string) (args []string) {
+	args = []string{}
+	rgxp, _ := regexp.Compile(`(.*)\((.*)\)`)
+	argString := rgxp.FindAllStringSubmatch(cmd, -1)[0][2]
+	if len(argString) > 0 {
+		unformattedArgs := strings.Split(argString, ",")
+		args = formatArgs(unformattedArgs)
+	}
+	return
+}
+
+func formatArgs(unformattedArgs []string) (args []string) {
+	for _, arg := range unformattedArgs {
+		args = append(args, strings.TrimSpace(arg))
+	}
+	return
+}
+
 func countLeadingSpace(line string) int {
 	i := 0
 	for _, runeValue := range line {
