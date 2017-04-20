@@ -22,11 +22,14 @@ splat myfile.yml
 
 splat! will run the command you defined in your YML, automatically replacing the values, in the case of the example, with the contents of the file `myfile`.
 
-## Planned commands
+## Implemented commands
 
 * `lookup`: search for a key and retrieve the variable
   * in files
   * in ENV variables
+
+## Planned commands
+
 * `fileContent`: insert the content of the file
 * `certificate`: generate a self-signed certificate
 * `cmd`: runs an arbitrary command in the OS and inserts the result (STDOUT) of that command.
