@@ -2,6 +2,7 @@ package splat
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -47,5 +48,26 @@ func lookUpEnv(args []string) (value string, err error) {
 	if present == false {
 		return value, fmt.Errorf("Cannot find variable %s in ENV", args[1])
 	}
+	return
+}
+
+// CmdFileContent gets the contents of a file
+func CmdFileContent(cmd Command) (value string, err error) {
+	absPath, _ := filepath.Abs(cmd.args[0])
+	content, err := ioutil.ReadFile(absPath)
+	if err != nil {
+		return value, err
+	}
+	value = string(content)
+	return value, nil
+}
+
+// CmdRun executes an abitrary command and gets the STDOUT result
+func CmdRun(cmd Command) (value string, err error) {
+	return
+}
+
+// CmdCertificate generates a certificate based on the parameters associated in the argument
+func CmdCertificate(cmd Command) (value string, err error) {
 	return
 }

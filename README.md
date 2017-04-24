@@ -29,12 +29,12 @@ splat! will run the command you defined in your YML, automatically replacing the
 * `lookup`: search for a key and retrieve the variable
   * in files
   * in ENV variables
+* `fileContent`: insert the content of the file
 
 ## Planned commands
 
-* `fileContent`: insert the content of the file
 * `certificate`: generate a self-signed certificate
-* `cmd`: runs an arbitrary command in the OS and inserts the result (STDOUT) of that command.
+* `run`: runs an arbitrary command in the OS and inserts the result (STDOUT) of that command.
 
 ## Suggestions?
 
