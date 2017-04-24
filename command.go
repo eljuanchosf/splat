@@ -4,16 +4,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	ini "gopkg.in/ini.v1"
 )
-
-// Command represents the structure of a runnable Command
-type Command struct {
-	runner string
-	args   []string
-}
 
 //CmdLookUp executes a lookup on a file or an eviroment variable
 func CmdLookUp(cmd Command) (value string, err error) {
@@ -22,7 +18,7 @@ func CmdLookUp(cmd Command) (value string, err error) {
 	} else {
 		value, err = lookUpFile(cmd.args)
 	}
-	return value, err
+	return
 }
 
 func lookUpFile(args []string) (value string, err error) {
@@ -40,7 +36,7 @@ func lookUpFile(args []string) (value string, err error) {
 		err = fmt.Errorf("Cannot find key %s in file %s", args[1], absPath)
 		return value, err
 	}
-	return value, nil
+	return
 }
 
 func lookUpEnv(args []string) (value string, err error) {
@@ -59,15 +55,45 @@ func CmdFileContent(cmd Command) (value string, err error) {
 		return value, err
 	}
 	value = string(content)
-	return value, nil
+	return
 }
 
 // CmdRun executes an abitrary command and gets the STDOUT result
 func CmdRun(cmd Command) (value string, err error) {
+	command := concatArgs(cmd.args)
+	fmt.Println("Running", command)
+	content, err := exec.Command(concatArgs(cmd.args)).Output()
+	if err != nil {
+		return value, err
+	}
+	value = strings.Replace(string(content), "\n", "", -1)
 	return
 }
 
 // CmdCertificate generates a certificate based on the parameters associated in the argument
 func CmdCertificate(cmd Command) (value string, err error) {
 	return
+}
+
+func concatArgs(args []string) (argLine string) {
+	for _, val := range args {
+		isFile, file := isFile(val)
+		if isFile == true {
+			argLine += file + " "
+		} else {
+			argLine += val + " "
+		}
+	}
+	return
+}
+
+func isFile(file string) (bool, string) {
+	absPath, err := filepath.Abs(file)
+	if err != nil {
+		return false, ""
+	}
+	if _, err := os.Stat(absPath); err == nil {
+		return true, absPath
+	}
+	return false, ""
 }
