@@ -18,7 +18,7 @@ func TestCmdLookUp(t *testing.T) {
 	// Create an env var for the test
 	os.Setenv("UPTOWN", "This hit, that ice cold")
 
-	fileLookUpCmd := Command{"lookup", []string{"./fixtures/test.ini", "UPTOWN"}}
+	fileLookUpCmd := []cmdArg{{0, "./fixtures/test.ini", true}, {1, "UPTOWN", false}}
 	envLookUpCmd := Command{"lookup", []string{"ENV", "UPTOWN"}}
 	badFileLookUpCmd := Command{"lookup", []string{"./fixtures/test.ini", "FUNK"}}
 	badEnvLookUpCmd := Command{"lookup", []string{"ENV", "FUNK"}}

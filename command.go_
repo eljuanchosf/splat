@@ -87,13 +87,4 @@ func concatArgs(args []string) (argLine string) {
 	return
 }
 
-func isFile(file string) (bool, string) {
-	absPath, err := filepath.Abs(file)
-	if err != nil {
-		return false, ""
-	}
-	if _, err := os.Stat(absPath); err == nil {
-		return true, absPath
-	}
-	return false, ""
-}
+
