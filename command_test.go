@@ -1,9 +1,17 @@
 package splat
 
 import (
+	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 )
+
+func readFile(file string) string {
+	absPath, _ := filepath.Abs(file)
+	content, _ := ioutil.ReadFile(absPath)
+	return string(content)
+}
 
 func TestCmdLookUp(t *testing.T) {
 
@@ -49,6 +57,7 @@ func TestCmdFileContent(t *testing.T) {
 	emptyFile := Command{"fileContent", []string{"./fixtures/an-empty-file.txt"}}
 	goodFile := Command{"fileContent", []string{"./fixtures/a-good-file.txt"}}
 	nonExistingFile := Command{"fileContent", []string{"./fixtures/file-not-exists.txt"}}
+	oneBigFile := Command{"fileContent", []string{"./fixtures/good-yaml.yml"}}
 	type args struct {
 		cmd Command
 	}
@@ -59,8 +68,9 @@ func TestCmdFileContent(t *testing.T) {
 		wantErr   bool
 	}{
 		{"Read empty file", args{emptyFile}, "", false},
-		{"Read a file", args{goodFile}, "THIS HIT, THAT ICE COLD", false},
+		{"Read a file", args{goodFile}, readFile(goodFile.args[0]), false},
 		{"Non existing file", args{nonExistingFile}, "", true},
+		{"One big file", args{oneBigFile}, readFile(oneBigFile.args[0]), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
