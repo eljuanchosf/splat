@@ -3,13 +3,11 @@ package splat
 import (
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"testing"
 )
 
 func readFile(file string) string {
-	absPath, _ := filepath.Abs(file)
-	content, _ := ioutil.ReadFile(absPath)
+	content, _ := ioutil.ReadFile(getAbsPath(file))
 	return string(content)
 }
 
@@ -19,13 +17,13 @@ func TestCmdLookUp(t *testing.T) {
 	os.Setenv("UPTOWN", "This hit, that ice cold")
 
 	fileLookUpCmd := []cmdArg{{0, "./fixtures/test.ini", true}, {1, "UPTOWN", false}}
-	envLookUpCmd := Command{"lookup", []string{"ENV", "UPTOWN"}}
-	badFileLookUpCmd := Command{"lookup", []string{"./fixtures/test.ini", "FUNK"}}
-	badEnvLookUpCmd := Command{"lookup", []string{"ENV", "FUNK"}}
-	fileDoesntExistsLookUpCmd := Command{"lookup", []string{"./fixtures/test-doesnt-exists.ini", "FUNK"}}
+	envLookUpCmd := []cmdArg{{0, "ENV", false}, {1, "UPTOWN", false}}
+	badFileLookUpCmd := []cmdArg{{0, "./fixtures/test.ini", true}, {1, "FUNK", false}}
+	badEnvLookUpCmd := []cmdArg{{0, "ENV", false}, {1, "FUNK", false}}
+	fileDoesntExistsLookUpCmd := []cmdArg{{0, "./fixtures/test-doesnt-exists.ini", false}, {1, "FUNK", false}}
 
 	type args struct {
-		cmd Command
+		cmdArgs []cmdArg
 	}
 	tests := []struct {
 		name      string
@@ -41,7 +39,7 @@ func TestCmdLookUp(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotValue, err := CmdLookUp(tt.args.cmd)
+			gotValue, err := CmdLookUp(tt.args.cmdArgs)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CmdLookUp() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -54,12 +52,12 @@ func TestCmdLookUp(t *testing.T) {
 }
 
 func TestCmdFileContent(t *testing.T) {
-	emptyFile := Command{"fileContent", []string{"./fixtures/an-empty-file.txt"}}
-	goodFile := Command{"fileContent", []string{"./fixtures/a-good-file.txt"}}
-	nonExistingFile := Command{"fileContent", []string{"./fixtures/file-not-exists.txt"}}
-	oneBigFile := Command{"fileContent", []string{"./fixtures/good-yaml.yml"}}
+	emptyFile := []cmdArg{{0, "./fixtures/an-empty-file.txt", true}}
+	goodFile := []cmdArg{{0, "./fixtures/a-good-file.txt", true}}
+	nonExistingFile := []cmdArg{{0, "./fixtures/file-not-exists.txt", false}}
+	oneBigFile := []cmdArg{{0, "./fixtures/good-yaml.yml", true}}
 	type args struct {
-		cmd Command
+		cmdArgs []cmdArg
 	}
 	tests := []struct {
 		name      string
@@ -68,13 +66,13 @@ func TestCmdFileContent(t *testing.T) {
 		wantErr   bool
 	}{
 		{"Read empty file", args{emptyFile}, "", false},
-		{"Read a file", args{goodFile}, readFile(goodFile.args[0]), false},
+		{"Read a file", args{goodFile}, readFile(goodFile[0].value), false},
 		{"Non existing file", args{nonExistingFile}, "", true},
-		{"One big file", args{oneBigFile}, readFile(oneBigFile.args[0]), false},
+		{"One big file", args{oneBigFile}, readFile(oneBigFile[0].value), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotValue, err := CmdFileContent(tt.args.cmd)
+			gotValue, err := CmdFileContent(tt.args.cmdArgs)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CmdFileContent() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -86,15 +84,14 @@ func TestCmdFileContent(t *testing.T) {
 	}
 }
 
-// TODO: go back when refactor the Cmd
-func skip_TestCmdRun(t *testing.T) {
-	currentPath, _ := filepath.Abs(".")
-	validCommand := Command{"cmdRun", []string{"cat", "./fixtures/a-good-file.txt"}}
-	validCommand2 := Command{"cmdRun", []string{"pwd"}}
-	validCommand3 := Command{"cmdRun", []string{"echo", "THIS HIT, THIS ICE COLD"}}
-	invalidCommand := Command{"cmdRun", []string{"this-command-is-inexistent"}}
+func TestCmdRun(t *testing.T) {
+	currentPath := getAbsPath(".")
+	validCommand := []cmdArg{{0, "cat", false}, {1, getAbsPath("./fixtures/a-good-file.txt"), true}}
+	validCommand2 := []cmdArg{{0, "pwd", false}}
+	validCommand3 := []cmdArg{{0, "echo", false}, {1, "THIS HIT, THIS ICE COLD", false}}
+	invalidCommand := []cmdArg{{0, "this-command-is-inexistent", false}}
 	type args struct {
-		cmd Command
+		cmdArgs []cmdArg
 	}
 	tests := []struct {
 		name      string
@@ -102,14 +99,14 @@ func skip_TestCmdRun(t *testing.T) {
 		wantValue string
 		wantErr   bool
 	}{
-		{"A command with a file argument", args{validCommand}, readFile("./fixtures/a-good-file.txt"), false},
+		{"A command with a file argument", args{validCommand}, readFile(validCommand[1].value), false},
 		{"A command with no arguments", args{validCommand2}, currentPath, false},
 		{"A command with a text argument", args{validCommand3}, "THIS HIT, THIS ICE COLD", false},
 		{"An invalid command", args{invalidCommand}, "", true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotValue, err := CmdRun(tt.args.cmd)
+			gotValue, err := CmdRun(tt.args.cmdArgs)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("CmdRun() error = %v, wantErr %v", err, tt.wantErr)
 				return
