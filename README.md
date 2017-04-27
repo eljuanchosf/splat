@@ -30,11 +30,11 @@ splat! will run the command you defined in your YML, automatically replacing the
   * in files
   * in ENV variables
 * `fileContent`: insert the content of the file
+* `run`: runs an arbitrary command in the OS and inserts the result (STDOUT) of that command.
 
 ## Planned commands
 
 * `certificate`: generate a self-signed certificate
-* `run`: runs an arbitrary command in the OS and inserts the result (STDOUT) of that command.
 
 ## Suggestions?
 
