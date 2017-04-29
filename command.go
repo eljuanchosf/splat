@@ -68,10 +68,10 @@ func CmdRun(cmdArgs []cmdArg) (value string, err error) {
 	return
 }
 
-// CmdCertificate generates a certificate based on the parameters associated in the argument
-func CmdCertificate(cmd Command) (value string, err error) {
-	return
-}
+// // CmdCertificate generates a certificate based on the parameters associated in the argument
+// func CmdCertificate(cmd Command) (value string, err error) {
+// 	return
+// }
 
 func concatArgs(cmdArgs []cmdArg) (argLine string) {
 	for _, arg := range cmdArgs {

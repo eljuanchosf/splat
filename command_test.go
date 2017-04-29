@@ -118,28 +118,28 @@ func TestCmdRun(t *testing.T) {
 	}
 }
 
-func TestCmdCertificate(t *testing.T) {
-	type args struct {
-		cmd Command
-	}
-	tests := []struct {
-		name      string
-		args      args
-		wantValue string
-		wantErr   bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotValue, err := CmdCertificate(tt.args.cmd)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("CmdCertificate() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if gotValue != tt.wantValue {
-				t.Errorf("CmdCertificate() = %v, want %v", gotValue, tt.wantValue)
-			}
-		})
-	}
-}
+// func TestCmdCertificate(t *testing.T) {
+// 	type args struct {
+// 		cmd Command
+// 	}
+// 	tests := []struct {
+// 		name      string
+// 		args      args
+// 		wantValue string
+// 		wantErr   bool
+// 	}{
+// 	// TODO: Add test cases.
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			gotValue, err := CmdCertificate(tt.args.cmd)
+// 			if (err != nil) != tt.wantErr {
+// 				t.Errorf("CmdCertificate() error = %v, wantErr %v", err, tt.wantErr)
+// 				return
+// 			}
+// 			if gotValue != tt.wantValue {
+// 				t.Errorf("CmdCertificate() = %v, want %v", gotValue, tt.wantValue)
+// 			}
+// 		})
+// 	}
+// }
