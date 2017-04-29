@@ -27,11 +27,7 @@ func Parse(doc string) (Doc, error) {
 	scanner := bufio.NewScanner(strings.NewReader(doc))
 	numLine := 0
 	for scanner.Scan() {
-		key, value, err := splitLine(scanner.Text())
-		if err != nil {
-			return yaml, err
-		}
-
+		key, value := splitLine(scanner.Text())
 		hasCommand := false
 		if regexp.MustCompile(`\(\(<.*>\)\)`).MatchString(value) == true {
 			hasCommand = true
@@ -58,14 +54,14 @@ func ParseFile(fileName string) (Doc, error) {
 	return yaml, nil
 }
 
-func splitLine(line string) (key string, value string, err error) {
+func splitLine(line string) (key string, value string) {
 	split := strings.SplitN(line, ":", 2)
 	key = split[0]
 	value = ""
 	if len(split) == 2 {
 		value = split[1]
 	}
-	return key, value, nil
+	return key, value
 }
 
 func countLeadingSpace(line string) int {
