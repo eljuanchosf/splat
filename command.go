@@ -26,10 +26,7 @@ func CmdLookUp(cmdArgs []cmdArg) (value string, err error) {
 }
 
 func lookUpFile(args []cmdArg) (value string, err error) {
-	cfg, err := ini.Load(args[0].value)
-	if err != nil {
-		return value, err
-	}
+	cfg, _ := ini.Load(args[0].value)
 	if cfg.Section("").HasKey(args[1].value) {
 		value = cfg.Section("").Key(args[1].value).String()
 	} else {
