@@ -20,10 +20,7 @@ type Command struct {
 }
 
 func extractCommand(text string) (command Command, err error) {
-	rgxp, err := regexp.Compile(`\(\(<(.*)>\)\)`)
-	if err != nil {
-		return command, err
-	}
+	rgxp, _ := regexp.Compile(`\(\(<(.*)>\)\)`)
 	r := rgxp.FindStringSubmatch(text)
 	cmdString := strings.TrimSpace(r[1])
 	command.runner = extractRunner(cmdString)
