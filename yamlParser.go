@@ -47,10 +47,7 @@ func ParseFile(fileName string) (Doc, error) {
 	if err != nil {
 		return Doc{}, err
 	}
-	yaml, err := Parse(string(bytes))
-	if err != nil {
-		return Doc{}, err
-	}
+	yaml, _ := Parse(string(bytes))
 	return yaml, nil
 }
 
