@@ -72,11 +72,3 @@ func CmdRun(cmdArgs []cmdArg) (value string, err error) {
 // func CmdCertificate(cmd Command) (value string, err error) {
 // 	return
 // }
-
-func concatArgs(cmdArgs []cmdArg) (argLine string) {
-	for _, arg := range cmdArgs {
-		argLine += arg.value + " "
-	}
-	argLine = strings.TrimSpace(argLine)
-	return
-}
